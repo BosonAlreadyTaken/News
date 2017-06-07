@@ -4,7 +4,7 @@
 (function (angular) {
     'use strict';
     /*1.创建模块*/
-    var app = angular.module('app',[]);
+    var app = angular.module('app',['ui.router']);
     /*2.创建一个控制器来管理整个项目*/
     app.controller('AppController',['$scope',function ($scope) {
         $scope.title = "WebApp";
@@ -32,8 +32,10 @@
             * *!/
             $scope.$broadcast('changeTitle',{title:title})
         })*/
-
-       $scope.type = "home";
+       
+       //上面的方式是 我的指令有自己的控制器 所以自己控制了自己内部的点击事件,现在换到这种我自己没有控制器,
+       //全部事件冒泡到上一级控制器监听
+       $scope.type = "home";//这里绑定这个属性是切换类的作用的
        $scope.tabbarChange = function (type) {
            $scope.type = type;
            var title = "首页";

@@ -1,109 +1,99 @@
-/**
- * Created by liuxin on 2017/5/26.
- */
-// 引入模块
-var gulp = require('gulp');
-//gulp-connect:自动更新当前文件的内容，调用reload方法自动刷新页面；uglify是压缩JS文件，lessmin是压缩css文件,concat是合并所有的文件到指定的文件
-var $ = require('gulp-load-plugins')();
+var app = {  // 定义目录
+    srcPath:'src/',
+    buildPath:'build/',
+    distPath:'dist/'
+}
 
+/*1.引入gulp与gulp插件   使用时，要去下载这些插件*/
+var gulp = require('gulp');
+var less = require('gulp-less');
+var cssmin = require('gulp-cssmin');
+var uglify = require('gulp-uglify');
+var concat = require('gulp-concat');
+var connect = require('gulp-connect');
+var imagemin = require('gulp-imagemin');
 var open = require('open');
 
-// 声明一个全局变零，定义目录路径
-var app = {
-    srcPath : 'src/',
-    devPath : 'build/',
-    prdPath : 'dist/'
-};
-
-
-// 将依赖放置到开发/环境中（vender是我们重新命名的一个文件夹它会自动生成）
-gulp.task('lib', function () {
-    gulp.src('./bower_components/**/*.js')
-        .pipe(gulp.dest(app.devPath + 'vendor'))//pipe不会保存数据（缓存）只是处理数据
-        .pipe(gulp.dest(app.prdPath + 'vendor'))
-        .pipe($.connect.reload());
+/*把bower下载的前端框架放到我们项目当中*/
+gulp.task('lib',function () {
+    gulp.src('bower_components/**/*.js')
+        .pipe(gulp.dest(app.buildPath+'lib'))
+        .pipe(gulp.dest(app.distPath+'lib'))
+        .pipe(connect.reload()) //当内容发生改变时， 重新加载。
 });
 
 
-// 将html文件放置到开发/发布环境中
-gulp.task('html', function () {
-    gulp.src(app.srcPath + '**/*.html')
-        .pipe(gulp.dest(app.devPath))
-        .pipe(gulp.dest(app.prdPath))
-        .pipe($.connect.reload());
+
+/*2.定义任务 把所有html文件移动另一个位置*/
+gulp.task('html',function () {
+    /*要操作哪些文件 确定源文件地址*/
+    gulp.src(app.srcPath+'**/*.html')  /*src下所有目录下的所有.html文件*/
+        .pipe(gulp.dest(app.buildPath)) //gulp.dest 要把文件放到指定的目标位置
+        .pipe(gulp.dest(app.distPath))
+        .pipe(connect.reload()) //当内容发生改变时， 重新加载。
+});
+/*3.执行任务 通过命令行。gulp 任务名称*/
+/*定义编译less任务  下载对应的插件 gulp-less
+ * 把less文件转成css放到build
+ * */
+gulp.task('less',function () {
+    gulp.src(app.srcPath+'style/index.less')
+        .pipe(less())
+        .pipe(gulp.dest(app.buildPath+'css/'))
+        /*经过压缩，放到dist目录当中*/
+        .pipe(cssmin())
+        .pipe(gulp.dest(app.distPath+'css/'))
+        .pipe(connect.reload())
 });
 
-
-// 将json文件放置到开发/发布环境中(实际开发中可能用不到, 这里模拟假数据)
-gulp.task('json', function () {
-    gulp.src(app.srcPath + 'data/**/*.json')
-        .pipe(gulp.dest(app.devPath+'data'))
-        .pipe(gulp.dest(app.prdPath+'data'))
-        .pipe($.connect.reload());
+/*合并js*/
+gulp.task('js',function () {
+    gulp.src(app.srcPath+'js/**/*.js')
+        .pipe(concat('index.js'))
+        .pipe(gulp.dest(app.buildPath+'js/'))
+        .pipe(uglify())
+        .pipe(gulp.dest(app.distPath+'js'))
+        .pipe(connect.reload())
 });
 
-// 将less文件
-gulp.task('less', function () {
-    gulp.src(app.srcPath + 'style/index.less')
-        .pipe($.less()) // 编译less文件为css文件
-        .pipe(gulp.dest(app.devPath+'style'))
-        .pipe($.cssmin()) // 因为要输出到发布目录下, 所以要对css文件进行压缩
-        .pipe(gulp.dest(app.prdPath+'style'))
-        .pipe($.connect.reload());
+/*压缩图片*/
+gulp.task('image',function () {
+    gulp.src(app.srcPath+'images/**/*')
+        .pipe(gulp.dest(app.buildPath+'images'))
+        .pipe(imagemin())
+        .pipe(gulp.dest(app.distPath+'images'))
+        .pipe(connect.reload())
 });
 
-// js文件
-gulp.task('js', function () {
-    gulp.src(app.srcPath + 'script/**/*.js')
-        .pipe($.concat('index.js')) // 对所有的js文件进行合并
-        .pipe(gulp.dest(app.devPath + 'js'))
-        .pipe($.uglify()) // 部署到发布环境需要将js文件进行压缩
-        .pipe(gulp.dest(app.prdPath + 'js'))
-        .pipe($.connect.reload());
+/*同时执行多个任务 [其它任务的名称]
+ * 当前bulid时，会自动把数组当中的所有任务给执行了。
+ * */
+gulp.task('build',['less','html','js','image','lib']);
+
+/*定义server任务
+ * 搭建一个服务器。设置运行的构建目录
+ * */
+gulp.task('server',['build'],function () {
+    /*设置服务器*/
+    connect.server({
+        root:[app.buildPath],//要运行哪个目录
+        livereload:true,  //是否热更新。
+        port:8888  //端口号
+    })
+    /*监听哪些任务*/
+    gulp.watch('bower_components/**/*',['lib']);
+    gulp.watch(app.srcPath+'**/*.html',['html']);
+    gulp.watch(app.srcPath+'js/**/*.js',['js']);
+    gulp.watch(app.srcPath+'images/**/*',['image']);
+    gulp.watch(app.srcPath+'style/**/*.less',['less']);
+
+    //通过浏览器把指定的地址 （http://localhost:9999）
+    open('http://localhost:8888');
 });
 
-
-// image
-gulp.task('image', function () {
-    gulp.src(app.srcPath + 'images/**/*')
-        .pipe(gulp.dest(app.devPath + 'images'))
-        .pipe(gulp.dest(app.prdPath + 'images'))
-        .pipe($.connect.reload());
-});
-
-// 清除任务
-gulp.task('clean', function () {
-    gulp.src([app.devPath, app.prdPath])
-        .pipe($.clean());
-});
+/*定义默认任务
+ * 直接执行gulp 会调用的任务
+ * */
+gulp.task('default',['server']);
 
 
-// 总的任务(将上述任务进行合并)
-gulp.task('build', ['image', 'js', 'less', 'json', 'html', 'lib']);
-
-
-// 自动开启服务
-gulp.task('serve', ['build'], function () {
-    // 开启连接服务
-    $.connect.server({
-        root:[app.devPath], // 设置根路径
-        livereload: true, // 是否自动刷新
-        port:3333// 指定端口号
-    });
-
-    open('http://localhost:3333');
-
-
-    // 设置监听的文件类型
-    gulp.watch('./bower_components/**/*', ['lib']);
-    gulp.watch(app.srcPath + '**/*.html', ['html']);
-    gulp.watch(app.srcPath + 'data/**/*.json', ['json']);
-    gulp.watch(app.srcPath + 'style/**/*.less', ['less']);
-    gulp.watch(app.srcPath + 'script/**/*.js', ['js']);
-    gulp.watch(app.srcPath + 'images/**/*', ['image']);
-
-    // 执行serve 任务的时候自动打开浏览器
-});
-
-// 默认任务gukp
-gulp.task('default', ['serve']);

@@ -1,0 +1,23 @@
+<div class="content">
+    <div class="home_list" ng-repeat="item in data">
+        <!--//小标签-->
+        <p class="tag" ng-bind="item.column.name" ng-if="item.column.name"></p>
+        <!--//标题-->
+        <h3 ng-bind="item.title"></h3>
+        <!--//文本内容有三种情况 纯文本 有在一张图片的 没有文本内容只有图片-->
+        <div class="pos1" ng-if="item.display_style == '10001'">
+            <p ng-bind="item.abstract"></p>
+        </div>
+        <div class="pos2" ng-if="item.display_style == '10002'">
+            <p ng-bind="item.abstract"></p>
+            <img src="images/tabicon/post_1.png" alt="">
+        </div>
+        <div class="pos3" ng-if="item.display_style == '10003'">
+                <ul>
+                    <li><img src="images/tabicon/post_3.png" alt=""></li>
+                    <li><img src="images/tabicon/post_4.png" alt=""></li>
+                    <li><img src="images/tabicon/post_5.png" alt=""></li>
+                </ul>
+        </div>
+    </div>
+</div>

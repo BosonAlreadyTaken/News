@@ -20,8 +20,8 @@
      在手机端，单位不是px. 是动态变化的一个值。rem
      rem 它是动态计算出来的一个值。
      它是根据html字体大小/ 比例得出的一个值。
-     100px / 10  = 10rem;
-     1rem = 10px;
+     375px / 10  = 37.5;
+     1rem = 37.5 px;
     */
 
 </script>
@@ -30,6 +30,12 @@
 
 <!--导航-->
 <nav-dir></nav-dir>
+
+<!--路由实现多视图 因为不想点击另一个按钮要重新加载 让这几个视图都在根目录里-->
+<div ui-view="home" ng-show="type === 'home'"></div>
+<div ui-view="author" ng-show="type === 'author'"></div>
+<div ui-view="content" ng-show="type === 'content'"></div>
+<div ui-view="my" ng-show="type === 'my'"></div>
 
 <!--底部标签切换-->
 <tabbar></tabbar>
