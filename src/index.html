@@ -1,10 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="app" ng-controller="AppController">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title ng-bind="title"></title>
+    <!--设置视口 当前项目是运行到手机端-->
+    <meta name="viewport" content="width=device-width maximum-scale=1.0 minimum-scale=1.0 user-scalable=no">
+    <link rel="stylesheet" href="css/index.css">
+
 </head>
+
+<script>
+    /*
+
+    1.设置视口
+    2.使用单位为rem
+      htmt字体大小/10 计算出来的值单位就是rem.
+
+     项目当中使用单位：px
+     在手机端，单位不是px. 是动态变化的一个值。rem
+     rem 它是动态计算出来的一个值。
+     它是根据html字体大小/ 比例得出的一个值。
+     100px / 10  = 10rem;
+     1rem = 10px;
+    */
+
+</script>
+
 <body>
-<p>123455</p>
+
+<!--导航-->
+<nav-dir></nav-dir>
+
+<!--底部标签切换-->
+<tabbar></tabbar>
+
+
+
 </body>
+<!--设置页面默认字体大小-->
+<script>
+    var font = window.screen.width / 10 + 'px';
+    document.getElementsByTagName('html')[0].style.fontSize = font;
+</script>
+
+<script src="lib/angular/angular.js"></script>
+<script src="lib/angular-ui-router/release/angular-ui-router.js"></script>
+<script src="js/index.js"></script>
+
 </html>
