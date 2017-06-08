@@ -5,7 +5,10 @@ angular.module('app').controller('homeController',['$scope','$state','myHttp',fu
     $state.go('root.list')
 
     myHttp.getData(function (res) {
-        $scope.data = res.posts;
+        // $scope.data = res.posts;
+
+        //json_server 
+        $scope.data = res;
         console.log($scope.data);
     }, function (err) {
         console.log(err);
