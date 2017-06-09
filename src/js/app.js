@@ -6,7 +6,7 @@
     /*1.创建模块*/
     var app = angular.module('app',['ui.router']);
     /*2.创建一个控制器来管理整个项目*/
-    app.controller('AppController',['$scope',function ($scope) {
+    app.controller('AppController',['$scope','$window',function ($scope,$window) {
         $scope.title = "WebApp";
 
        /* /!*监听tabbarchange通知*!/
@@ -55,6 +55,9 @@
            }
            $scope.$broadcast('changeTitle',{title:title})
        };
+       $scope.back = function () {
+           $window.history.back();
+       }
 
 
     }]);

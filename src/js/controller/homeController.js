@@ -9,7 +9,7 @@ angular.module('app').controller('homeController',['$scope','$state','myHttp',fu
 
         //json_server 
         $scope.data = res;
-        console.log($scope.data);
+        // console.log($scope.data);
     }, function (err) {
         console.log(err);
     })

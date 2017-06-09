@@ -1,5 +1,5 @@
 <div class="content">
-    <div class="home_list" ng-repeat="item in data">
+    <div class="home_list" ng-repeat="(key,item) in data" ui-sref="root.detail({id:key})">
         <!--//小标签-->
         <p class="tag" ng-bind="item.column.name" ng-if="item.column.name"></p>
         <!--//标题-->

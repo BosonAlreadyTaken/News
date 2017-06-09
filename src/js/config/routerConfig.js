@@ -1,7 +1,7 @@
 angular.module('app')
     .config(['$stateProvider','$urlRouterProvider', function ($stateProvider,$urlRouterProvider) {
         $stateProvider.state('root',{
-            url:'/',
+            url:'/root',
             views:{
                 home:{
                     templateUrl:'../views/home_tpl.html',
@@ -21,11 +21,18 @@ angular.module('app')
                 }
             }
         });
-        $urlRouterProvider.otherwise('/');
+        $urlRouterProvider.otherwise('/root');
     }])
     .config(['$stateProvider','$urlRouterProvider',function ($stateProvider,$urlRouterProvider) {
         $stateProvider.state('root.list',{
+            url: '/list',
             template: '<home-list></home-list>'
         })
-
+    }])
+    .config(['$stateProvider','$urlRouterProvider',function ($stateProvider,$urlRouterProvider) {
+        $stateProvider.state('root.detail',{
+            url: '/detail/:id',
+            template:'<detail content="{{content}}"></detail>',
+            controller: 'detailController'
+        })
     }])
