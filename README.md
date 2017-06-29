@@ -1,1 +1,1 @@
-# 一个新闻类的webapp
+#webapp
